@@ -1,17 +1,13 @@
-import { PLAY } from './gameActions'
+import { PLAY, CHOICES } from './gameActions'
 
 const initialState = {
   playerChoice: null,
   opponentChoice: null
 }
 
-const choices = [
-  'rock',
-  'paper',
-  'scissors'
-]
-
 const gameReducer = (state = initialState, action) => {
+  let choices = [CHOICES.ROCK, CHOICES.PAPER, CHOICES.SCISSORS]
+
   switch (action.type) {
     case PLAY:
       let opponentChoice = choices[ Math.floor(Math.random() * choices.length) ]
