@@ -17,10 +17,27 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
+const winCheck = (playerChoice, opponentChoice, CHOICES) => {
+  let playerScore = CHOICES.indexOf(playerChoice)
+  let opponentScore = CHOICES.indexOf(opponentChoice)
+  let mod = CHOICES.length
+
+  if (playerScore === (opponentScore + 1) % mod)
+    return 'win'
+  else if (opponentScore === (playerScore + 1) % mod) {
+    return 'lose'
+  } else {
+    return 'tie'
+  }
+}
+
 let Game = ({ onChoiceClick, playerChoice, opponentChoice }) => {
   let [ rock, paper, scissors ] = CHOICES
+  let outcome = winCheck(playerChoice, opponentChoice, CHOICES)
+
   return(
     <div>
+      <div>Outcome: {outcome}</div>
       <div>Current Choice: {playerChoice}</div>
       <div>Opponent Choice: {opponentChoice}</div>
       <button onClick={() => onChoiceClick(rock)}>Rock</button>
