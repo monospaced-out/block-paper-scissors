@@ -1,10 +1,14 @@
 export const PLAY = 'PLAY'
 
-export const CHOICES = {
-  ROCK: 'rock',
-  PAPER: 'paper',
-  SCISSORS: 'scissors'
-}
+export const ROCK = 'rock'
+export const PAPER = 'paper'
+export const SCISSORS = 'scissors'
+
+export const CHOICES = [
+  ROCK,
+  PAPER,
+  SCISSORS
+]
 
 export function play(choice) {
   return {

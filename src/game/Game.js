@@ -1,7 +1,6 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 import { play, CHOICES } from './gameActions'
-import store from '../store'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -19,14 +18,14 @@ const mapDispatchToProps = dispatch => {
 }
 
 let Game = ({ onChoiceClick, playerChoice, opponentChoice }) => {
-  let { ROCK, PAPER, SCISSORS } = CHOICES
+  let [ rock, paper, scissors ] = CHOICES
   return(
     <div>
       <div>Current Choice: {playerChoice}</div>
       <div>Opponent Choice: {opponentChoice}</div>
-      <button onClick={() => onChoiceClick(ROCK)}>Rock</button>
-      <button onClick={() => onChoiceClick(PAPER)}>Paper</button>
-      <button onClick={() => onChoiceClick(SCISSORS)}>Scissors</button>
+      <button onClick={() => onChoiceClick(rock)}>Rock</button>
+      <button onClick={() => onChoiceClick(paper)}>Paper</button>
+      <button onClick={() => onChoiceClick(scissors)}>Scissors</button>
     </div>
   )
 }
