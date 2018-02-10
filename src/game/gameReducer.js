@@ -1,4 +1,4 @@
-import { PLAY, CHOICES } from './gameActions'
+import { PLAY, CHOICES } from './ui/choiceButton/ChoiceButtonActions'
 
 const initialState = {
   playerChoice: null,
