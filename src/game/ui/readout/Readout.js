@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { CHOICES } from '../../ui/choiceButton/ChoiceButtonActions'
+import { resetGame } from './ReadoutActions'
 
 const winCheck = (playerChoice, opponentChoice, CHOICES) => {
   let playerScore = CHOICES.indexOf(playerChoice)
@@ -24,16 +25,21 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 const mapDispatchToProps = dispatch => {
-  return {}
+  return {
+    resetGame() {
+      dispatch(resetGame())
+    }
+  }
 }
 
-let Readout = ({ playerChoice, opponentChoice }) => {
+let Readout = ({ playerChoice, opponentChoice, resetGame }) => {
   let outcome = winCheck(playerChoice, opponentChoice, CHOICES)
   return (
     <div>
       <div>Outcome: {outcome}</div>
       <div>Current Choice: {playerChoice}</div>
       <div>Opponent Choice: {opponentChoice}</div>
+      <button onClick={() => resetGame()}>New Game</button>
     </div>
   )
 }
