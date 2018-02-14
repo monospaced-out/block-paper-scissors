@@ -28,7 +28,6 @@ const mapDispatchToProps = dispatch => {
 }
 
 let Readout = ({ playerChoice, opponentChoice }) => {
-  let buttonChoice = 'rock'
   let outcome = winCheck(playerChoice, opponentChoice, CHOICES)
   return (
     <div>
@@ -45,4 +44,3 @@ const ReadoutContainer = connect(
 )(Readout)
 
 export default ReadoutContainer
-
