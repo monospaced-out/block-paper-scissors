@@ -24,7 +24,7 @@ const gameReducer = (state = initialState, action) => {
       let opponentChoice = CHOICES[ Math.floor(Math.random() * CHOICES.length) ]
       return { ...state, playerChoice: action.choice, opponentChoice }
     case RESET_GAME:
-      return { ...state, playerChoice: null, opponentChoice: null }
+      return { ...state, playerChoice: null, opponentChoice: null, opponent: null }
     case UPDATE_PLAYERS:
       return { ...state,
         players: action.players,

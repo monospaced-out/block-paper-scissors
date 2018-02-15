@@ -3,11 +3,13 @@ import { connect } from 'react-redux'
 import Readout from '../readout/Readout'
 import ChoiceButton from '../choiceButton/ChoiceButton'
 import { CHOICES } from '../choiceButton/ChoiceButtonActions'
+import Players from '../../ui/players/Players'
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   return {
     playerChoice: state.game.playerChoice,
-    opponentChoice: state.game.opponentChoice
+    opponentChoice: state.game.opponentChoice,
+    opponent: state.game.opponent
   }
 }
 
@@ -15,7 +17,7 @@ const mapDispatchToProps = dispatch => {
   return {}
 }
 
-let GameMain = ({ playerChoice, opponentChoice }) => {
+let GameMain = ({ playerChoice, opponentChoice, opponent }) => {
   let readout =
     <div>
       <Readout />
@@ -30,7 +32,11 @@ let GameMain = ({ playerChoice, opponentChoice }) => {
       }
     </div>
 
-  if (playerChoice && opponentChoice) {
+  let players = <Players />
+
+  if (!opponent) {
+    return players
+  } else if (playerChoice && opponentChoice) {
     return readout
   } else {
     return buttons
