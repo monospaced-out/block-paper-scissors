@@ -150,7 +150,40 @@ function onProxyError(proxy) {
   }
 }
 
+function setupExpress() {
+  const express = require('express')
+  const http = require('http')
+
+  const app = express()
+
+  const server = http.createServer(app)
+  const io = require('socket.io')(server, {
+    pingTimeout: 2000,
+    pingInterval: 900
+  })
+
+  let clients = [];
+
+  io.on('connection', function (socket) {
+    socket.on('introduction', function (introData) {
+      clients.push(introData.address)
+      io.sockets.emit('addresses', clients)
+
+      socket.on('disconnect', function () {
+        clients = clients.filter(a => a !== introData.address)
+        io.sockets.emit('addresses', clients)
+      })
+    })
+  })
+
+  server.listen(8080, function listening() {
+    console.log('Listening on %d', server.address().port);
+  })
+}
+
 function addMiddleware(devServer) {
+  setupExpress()
+
   // `proxy` lets you to specify a fallback server during development.
   // Every unrecognized request will be forwarded to it.
   var proxy = require(paths.appPackageJson).proxy;
