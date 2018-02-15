@@ -173,7 +173,7 @@ function setupExpress() {
 
       socket.on('disconnect', function () {
         clients = clients.filter(c => c.address !== myAddress)
-        io.sockets.emit('addresses', clients)
+        io.sockets.emit('addresses', clients.map(client => client.address))
       })
 
       socket.on('sendMessage', function ({ recipient, message, meta }) {
