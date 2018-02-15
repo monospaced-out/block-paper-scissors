@@ -7,9 +7,15 @@ const initialState = {
   playerChoice: null,
   opponentChoice: null,
   players: [],
-  incomingInvites: [], // TODO: filter out disconnected players
+  incomingInvites: [],
   outgoingInvites: [],
   opponent: null
+}
+
+const filterInactive = (players, activePlayers) => {
+  return players.filter(function(p) {
+    return activePlayers.indexOf(p) !== -1;
+  });
 }
 
 const gameReducer = (state = initialState, action) => {
@@ -20,7 +26,11 @@ const gameReducer = (state = initialState, action) => {
     case RESET_GAME:
       return { ...state, playerChoice: null, opponentChoice: null }
     case UPDATE_PLAYERS:
-      return { ...state, players: action.players }
+      return { ...state,
+        players: action.players,
+        incomingInvites: filterInactive(state.incomingInvites, action.players),
+        outgoingInvites: filterInactive(state.outgoingInvites, action.players)
+      }
     case ON_RECEIVE_INVITE:
       return { ...state, incomingInvites: [ ...state.incomingInvites, action.sender ] }
     case ON_RECEIVE_CANCEL_INVITE:
