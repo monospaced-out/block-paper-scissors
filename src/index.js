@@ -4,6 +4,8 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { UserIsAuthenticated, UserIsNotAuthenticated } from './util/wrappers.js'
+import { subscribeToAddresses } from './api/Api'
+import { updatePlayers } from './game/ui/players/PlayerActions'
 import getWeb3 from './util/web3/getWeb3'
 
 // Layouts
@@ -23,6 +25,16 @@ const history = syncHistoryWithStore(browserHistory, store)
 getWeb3
 .then(results => {
   console.log('Web3 initialized!')
+  let web3 = store.getState().web3.web3Instance
+  let myAddress = web3.eth.accounts[0]
+  if (myAddress) {
+    subscribeToAddresses(myAddress, addresses => {
+      let notIncludingMyAddress = addresses.filter( address => {
+        return address !== myAddress
+      })
+      store.dispatch(updatePlayers(notIncludingMyAddress))
+    })
+  }
 })
 .catch(() => {
   console.log('Error in web3 initialization.')
