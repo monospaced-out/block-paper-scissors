@@ -9,7 +9,8 @@ const initialState = {
   players: [],
   incomingInvites: [],
   outgoingInvites: [],
-  opponent: null
+  opponent: null,
+  gameId: null
 }
 
 const filterInactive = (players, activePlayers) => {
@@ -24,7 +25,7 @@ const gameReducer = (state = initialState, action) => {
       let opponentChoice = CHOICES[ Math.floor(Math.random() * CHOICES.length) ]
       return { ...state, playerChoice: action.choice, opponentChoice }
     case RESET_GAME:
-      return { ...state, playerChoice: null, opponentChoice: null, opponent: null }
+      return { ...state, playerChoice: null, opponentChoice: null, opponent: null, gameId: null }
     case UPDATE_PLAYERS:
       return { ...state,
         players: action.players,
@@ -37,7 +38,7 @@ const gameReducer = (state = initialState, action) => {
       return { ...state, incomingInvites: state.incomingInvites.filter(i => i !== action.sender) }
     case ON_RECEIVE_ACCEPT_INVITE:
       if ( state.outgoingInvites.includes(action.sender) ) {
-        return { ...state, outgoingInvites: [], opponent: action.sender }
+        return { ...state, outgoingInvites: [], opponent: action.sender, gameId: action.gameId }
       }
       return state
     case ON_RECEIVE_REJECT_INVITE:
@@ -49,8 +50,14 @@ const gameReducer = (state = initialState, action) => {
       sendMessage({ recipient: action.recipient, message: CANCEL_INVITE_MESSAGE, meta: null })
       return { ...state, outgoingInvites: state.outgoingInvites.filter((i => i !== action.recipient)) }
     case ACCEPT_INVITE:
-      sendMessage({ recipient: action.recipient, message: ACCEPT_INVITE_MESSAGE, meta: null })
-      return { ...state, outgoingInvites: [], incomingInvites: state.incomingInvites.filter((i => i !== action.recipient)), opponent: action.recipient }
+      let gameId = Date.now()
+      sendMessage({ recipient: action.recipient, message: ACCEPT_INVITE_MESSAGE, meta: gameId })
+      return { ...state,
+        outgoingInvites: [],
+        incomingInvites: state.incomingInvites.filter((i => i !== action.recipient)),
+        opponent: action.recipient,
+        gameId: gameId
+      }
     case REJECT_INVITE:
       sendMessage({ recipient: action.recipient, message: REJECT_INVITE_MESSAGE, meta: null })
       return { ...state, incomingInvites: state.incomingInvites.filter((i => i !== action.recipient)) }

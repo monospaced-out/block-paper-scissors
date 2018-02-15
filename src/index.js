@@ -43,7 +43,8 @@ getWeb3
           store.dispatch(onReceiveCancelInvite(sender))
           break
         case ACCEPT_INVITE_MESSAGE:
-          store.dispatch(onReceiveAcceptInvite(sender))
+          let gameId = meta
+          store.dispatch(onReceiveAcceptInvite(sender, gameId))
           break
         case REJECT_INVITE_MESSAGE:
           store.dispatch(onReceiveRejectInvite(sender))

@@ -29,10 +29,11 @@ export function onReceiveCancelInvite(sender) {
   }
 }
 
-export function onReceiveAcceptInvite(sender) {
+export function onReceiveAcceptInvite(sender, gameId) {
   return {
     type: ON_RECEIVE_ACCEPT_INVITE,
-    sender
+    sender,
+    gameId
   }
 }
 
