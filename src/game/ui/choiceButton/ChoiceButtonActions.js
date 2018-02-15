@@ -10,9 +10,10 @@ export const CHOICES = [
   SCISSORS
 ]
 
-export function play(choice) {
+export function play(choice, key) {
   return {
     type: PLAY,
-    choice
+    choice,
+    key
   }
 }

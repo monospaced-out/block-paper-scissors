@@ -38,7 +38,7 @@ const mapDispatchToProps = dispatch => {
       let key = Date.now()
       let encryptedChoice = encryptChoice(choice, key)
       postPlayToBlockchain(opponent, encryptedChoice, gameId, () => {
-        dispatch(play(choice))
+        dispatch(play(choice, key))
       })
     }
   }

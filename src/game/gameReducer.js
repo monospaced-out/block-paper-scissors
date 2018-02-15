@@ -10,7 +10,8 @@ const initialState = {
   incomingInvites: [],
   outgoingInvites: [],
   opponent: null,
-  gameId: null
+  gameId: null,
+  key: null
 }
 
 const filterInactive = (players, activePlayers) => {
@@ -23,9 +24,9 @@ const gameReducer = (state = initialState, action) => {
   switch (action.type) {
     case PLAY:
       let opponentChoice = CHOICES[ Math.floor(Math.random() * CHOICES.length) ]
-      return { ...state, playerChoice: action.choice, opponentChoice }
+      return { ...state, playerChoice: action.choice, key: action.key, opponentChoice }
     case RESET_GAME:
-      return { ...state, playerChoice: null, opponentChoice: null, opponent: null, gameId: null }
+      return { ...state, playerChoice: null, opponentChoice: null, opponent: null, gameId: null, key: null }
     case UPDATE_PLAYERS:
       return { ...state,
         players: action.players,
