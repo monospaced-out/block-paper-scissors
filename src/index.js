@@ -4,8 +4,8 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { UserIsAuthenticated, UserIsNotAuthenticated } from './util/wrappers.js'
-import { subscribeToAddresses } from './api/Api'
-import { updatePlayers } from './game/ui/players/PlayerActions'
+import { subscribeToAddresses, subscribeToMessages, INVITE_MESSAGE, CANCEL_INVITE_MESSAGE, ACCEPT_INVITE_MESSAGE, REJECT_INVITE_MESSAGE } from './api/Api'
+import { updatePlayers, onReceiveInvite, onReceiveCancelInvite, onReceiveAcceptInvite, onReceiveRejectInvite } from './game/ui/players/PlayerActions'
 import getWeb3 from './util/web3/getWeb3'
 
 // Layouts
@@ -33,6 +33,24 @@ getWeb3
         return address !== myAddress
       })
       store.dispatch(updatePlayers(notIncludingMyAddress))
+    })
+    subscribeToMessages(({sender, message, meta}) => {
+      switch (message) {
+        case INVITE_MESSAGE:
+          store.dispatch(onReceiveInvite(sender))
+          break
+        case CANCEL_INVITE_MESSAGE:
+          store.dispatch(onReceiveCancelInvite(sender))
+          break
+        case ACCEPT_INVITE_MESSAGE:
+          store.dispatch(onReceiveAcceptInvite(sender))
+          break
+        case REJECT_INVITE_MESSAGE:
+          store.dispatch(onReceiveRejectInvite(sender))
+          break
+        default:
+          console.log('invalid message', message)
+      }
     })
   }
 })
