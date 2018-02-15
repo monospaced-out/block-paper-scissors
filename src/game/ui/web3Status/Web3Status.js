@@ -11,9 +11,9 @@ let Web3Status = ({ web3Instance }) => {
   let hasAddress = web3Instance && web3Instance.eth.accounts[0]
   let status = hasAddress ? 'Connected to web3 :)' : 'Not connected to web3 :('
   return(
-    <div className="web3-status">
+    <p className="web3-status">
       { status }
-    </div>
+    </p>
   )
 }
 
