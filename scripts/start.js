@@ -166,12 +166,22 @@ function setupExpress() {
 
   io.on('connection', function (socket) {
     socket.on('introduction', function (introData) {
-      clients.push(introData.address)
-      io.sockets.emit('addresses', clients)
+      let myAddress = introData.address
+
+      clients.push({address: introData.address, socket: socket})
+      io.sockets.emit('addresses', clients.map(client => client.address))
 
       socket.on('disconnect', function () {
-        clients = clients.filter(a => a !== introData.address)
+        clients = clients.filter(c => c.address !== myAddress)
         io.sockets.emit('addresses', clients)
+      })
+
+      socket.on('sendMessage', function ({ recipient, message, meta }) {
+        let matches = clients.filter(c => c.address === recipient)
+        let target = matches.length ? matches[0] : null
+        if (target) {
+          target.socket.emit('receiveMessage', { sender: myAddress, message, meta })
+        }
       })
     })
   })
