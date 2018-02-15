@@ -34,7 +34,7 @@ const gameReducer = (state = initialState, action) => {
       return { ...state, outgoingInvites: state.outgoingInvites.filter(i => i !== action.sender) }
     case SEND_INVITE:
       sendMessage({ recipient: action.recipient, message: INVITE_MESSAGE, meta: null })
-      return { ...state, outgoingInvites: state.outgoingInvites.concat([action.recipient]) }
+      return { ...state, outgoingInvites: [ ...state.outgoingInvites, action.recipient ] }
     case CANCEL_INVITE:
       sendMessage({ recipient: action.recipient, message: CANCEL_INVITE_MESSAGE, meta: null })
       return { ...state, outgoingInvites: state.outgoingInvites.filter((i => i !== action.recipient)) }
