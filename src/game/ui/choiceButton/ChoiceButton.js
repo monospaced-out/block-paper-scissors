@@ -41,9 +41,8 @@ const mapDispatchToProps = dispatch => {
     onChoiceClick: (opponent, choice, gameId) => {
       let key = Date.now()
       let encryptedChoice = encryptChoice(choice, key)
-      postPlayToBlockchain(opponent, encryptedChoice, gameId, () => {
-        dispatch(play(choice, key))
-      })
+      postPlayToBlockchain(opponent, encryptedChoice, gameId)
+      dispatch(play(choice, key))
     }
   }
 }
