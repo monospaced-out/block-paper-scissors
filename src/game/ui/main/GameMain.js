@@ -37,7 +37,7 @@ let GameMain = ({ playerChoice, opponentChoice, opponentKey, opponent }) => {
 
   if (!opponent) {
     return players
-  } else if (playerChoice && opponentChoice && opponentKey) {
+  } else if (playerChoice) {
     return readout
   } else {
     return buttons

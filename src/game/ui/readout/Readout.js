@@ -53,13 +53,18 @@ const mapDispatchToProps = dispatch => {
 
 let Readout = ({ playerChoice, opponentChoice, opponentKey, resetGame }) => {
   let decryptedChoice = decryptChoice(opponentChoice, opponentKey)
-  let outcome = winCheck(playerChoice, decryptedChoice, CHOICES)
+  let opponentChoiceDisplay = opponentChoice ? decryptedChoice : '...'
+  let outcome = (opponentKey && opponentChoice) ? winCheck(playerChoice, opponentChoiceDisplay, CHOICES) : '...'
+  let newGameButton
+  if (opponentChoice) {
+    newGameButton = <button onClick={() => resetGame()}>New Game</button>
+  }
   return (
     <div>
       <div>Outcome: {outcome}</div>
       <div>My Choice: {playerChoice}</div>
-      <div>Opponent Choice: {decryptedChoice}</div>
-      <button onClick={() => resetGame()}>New Game</button>
+      <div>Opponent Choice: {opponentChoiceDisplay}</div>
+      {newGameButton}
     </div>
   )
 }
