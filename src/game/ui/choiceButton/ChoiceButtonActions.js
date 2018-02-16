@@ -10,6 +10,12 @@ export const CHOICES = [
   SCISSORS
 ]
 
+export const CHOICE_IMAGE_MAPPING = {
+  'rock': 'choices/block.svg',
+  'paper': 'choices/paper.svg',
+  'scissors': 'choices/scissors.svg'
+}
+
 export function play(choice, key) {
   return {
     type: PLAY,

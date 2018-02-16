@@ -25,7 +25,7 @@ let GameMain = ({ playerChoice, opponentChoice, opponentKey, opponent }) => {
     </div>
 
   let buttons =
-    <div>
+    <div className="choice-button-container">
       {
         CHOICES.map((choice, index) => {
           return (<ChoiceButton choice={choice} key={index} />)

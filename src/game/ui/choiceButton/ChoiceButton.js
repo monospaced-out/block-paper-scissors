@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { play } from './ChoiceButtonActions'
+import { play, CHOICE_IMAGE_MAPPING } from './ChoiceButtonActions'
 import store from '../../../store'
 import BlockPaperScissorsContract from '../../../../build/contracts/BlockPaperScissors.json'
 
@@ -49,8 +49,9 @@ const mapDispatchToProps = dispatch => {
 }
 
 let ChoiceButton = ({ onChoiceClick, opponent, choice, gameId }) => {
+  let src = CHOICE_IMAGE_MAPPING[choice]
   return (
-    <button onClick={() => onChoiceClick(opponent, choice, gameId)}>{choice}</button>
+    <img className="choice" onClick={() => onChoiceClick(opponent, choice, gameId)} src={src} alt={choice} />
   )
 }
 

@@ -1,9 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { CHOICES, ROCK, PAPER, SCISSORS } from '../../ui/choiceButton/ChoiceButtonActions'
+import { CHOICES, CHOICE_IMAGE_MAPPING, ROCK, PAPER, SCISSORS } from '../../ui/choiceButton/ChoiceButtonActions'
 import { resetGame } from './ReadoutActions'
 
 const hash = require('hash.js')
+
+const LOADING_IMAGE_SRC = ''
 
 const winCheck = (playerChoice, opponentChoice, CHOICES) => {
   let playerChoiceIndex = CHOICES.indexOf(playerChoice)
@@ -11,13 +13,13 @@ const winCheck = (playerChoice, opponentChoice, CHOICES) => {
   let mod = CHOICES.length
 
   if (playerChoiceIndex === (opponentChoiceIndex + 1) % mod)
-    return 'win'
+    return 'YOU WIN'
   else if (opponentChoiceIndex === (playerChoiceIndex + 1) % mod) {
-    return 'lose'
+    return 'YOU LOSE'
   } else if (opponentChoiceIndex === playerChoiceIndex) {
-    return 'tie'
+    return 'IT\'S A DRAW'
   } else {
-    return 'invalid'
+    return 'well fuck'
   }
 }
 
@@ -52,19 +54,33 @@ const mapDispatchToProps = dispatch => {
 }
 
 let Readout = ({ playerChoice, opponentChoice, opponentKey, resetGame }) => {
+  let hasOpponentChoice = opponentKey && opponentChoice
   let decryptedChoice = decryptChoice(opponentChoice, opponentKey)
   let opponentChoiceDisplay = opponentChoice ? decryptedChoice : '...'
-  let outcome = (opponentKey && opponentChoice) ? winCheck(playerChoice, opponentChoiceDisplay, CHOICES) : '...'
+  let outcome = hasOpponentChoice ? winCheck(playerChoice, opponentChoiceDisplay, CHOICES) : ''
   let newGameButton
   if (opponentChoice) {
-    newGameButton = <button onClick={() => resetGame()}>New Game</button>
+    newGameButton = <span className="btn" onClick={() => resetGame()}>New Game</span>
   }
+  let myImage = <img src={CHOICE_IMAGE_MAPPING[playerChoice]} alt={playerChoice} />
+  let loadingSpinner = <div className="spinner"></div>
+  let theirImage = hasOpponentChoice ? <img src={CHOICE_IMAGE_MAPPING[decryptedChoice]} alt={opponentChoice} /> : loadingSpinner
   return (
     <div>
-      <div>Outcome: {outcome}</div>
-      <div>My Choice: {playerChoice}</div>
-      <div>Opponent Choice: {opponentChoiceDisplay}</div>
-      {newGameButton}
+      <div className="readout-choice-container">
+        <div className="readout-choice">
+          {myImage}
+        </div>
+        <div className="readout-choice">
+          {theirImage}
+        </div>
+      </div>
+      <div className="outcome">
+        {outcome}
+      </div>
+      <div className="new-game-container">
+        {newGameButton}
+      </div>
     </div>
   )
 }

@@ -51,7 +51,50 @@ img.logo {
   margin-right: 10px;
 }
 
+.choice-button-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.choice {
+  width: 150px;
+  height: 150px;
+  padding: 25px;
+}
+
+.choice:hover {
+  background: #0d0223;
+  cursor: pointer;
+}
+
+.readout-choice-container {
+  display: flex;
+}
+
+.readout-choice {
+  text-align: center;
+  flex-grow: 1;
+  position: relative;
+}
+
+.readout-choice img {
+  width: 150px;
+  height: 150px;
+}
+
+.new-game-container {
+  text-align: center;
+}
+
+.outcome {
+  text-align: center;
+  font-size: 2em;
+  color: #eee;
+  margin: 50px 10px 30px 10px;
+}
+
 .web3-status {
+  text-align: center;
   margin-top: 50px;
   color: #4c4756;
 }
@@ -103,4 +146,27 @@ code {
 .navbar .uport-logo {
   height: 16px;
   margin-right: 10px;
+}
+
+
+/* https://stephanwagner.me/only-css-loading-spinner */
+
+@keyframes spinner {
+  to {transform: rotate(360deg);}
+}
+
+.spinner:before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  margin-top: -50px;
+  margin-left: -50px;
+  border-radius: 50%;
+  border: 8px solid #0d0223;
+  border-top-color: #38d1ad;
+  animation: spinner .6s linear infinite;
 }
