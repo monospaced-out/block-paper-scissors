@@ -37,8 +37,7 @@ const waitForTransactionFrom = (from, cb) => {
           web3.eth.getTransaction(txId, (err, transaction) => {
             if (transaction.from === from) {
               cb()
-            } else {
-              waitForTransactionFrom(web3, from, cb)
+              filter.stopWatching()
             }
           })
         })
@@ -86,7 +85,9 @@ const gameReducer = (state = initialState, action) => {
       return state
     case ON_RECEIVE_COMMIT_CHOICE:
       waitForTransactionFrom(state.opponent, () => {
-        getChoiceFromBlockchain(state.opponent, state.gameId, (choice) => {
+        // load current, up-to-date state because we don't know when this will run
+        let currentState = store.getState()
+        getChoiceFromBlockchain(currentState.game.opponent, currentState.game.gameId, (choice) => {
           store.dispatch({ type: ON_RECEIVE_RECORDED_CHOICE, choice })
         })
       })
