@@ -14,6 +14,7 @@ const postPlayToBlockchain = (opponent, choice, gameId, cb) => {
 
   let blockPaperScissors = contract(BlockPaperScissorsContract)
   blockPaperScissors.setProvider(web3.currentProvider)
+  console.log('deployed address', CONTRACT_ADDRESS)
   let deployed = CONTRACT_ADDRESS ? blockPaperScissors.at(CONTRACT_ADDRESS) : blockPaperScissors.deployed()
 
   // Get current ethereum wallet.
