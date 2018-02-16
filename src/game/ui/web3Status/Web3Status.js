@@ -9,10 +9,10 @@ const mapStateToProps = (state) => {
 
 let Web3Status = ({ web3Instance }) => {
   let hasAddress = web3Instance && web3Instance.eth.accounts[0]
-  let status = hasAddress ? 'Connected to web3 :)' : 'Not connected to web3 :('
+  let status = hasAddress ? 'You are connected to web3. :)' : 'You are not connected to web3. :('
   return(
     <p className="web3-status">
-      { status }
+      This is currently running on the Rinkeby testnet. { status }
     </p>
   )
 }
