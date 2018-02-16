@@ -28,25 +28,6 @@ const filterInactive = (players, activePlayers) => {
   });
 }
 
-const waitForTransactionFrom = (from, cb) => {
-  let web3 = store.getState().web3.web3Instance
-  let filter = web3.eth.filter('latest')
-  filter.watch(function(err, blockHash) {
-    web3.eth.getBlock(blockHash, false, (err, confirmedBlock) => {
-      if (confirmedBlock.transactions.length > 0) {
-        confirmedBlock.transactions.forEach(function(txId) {
-          web3.eth.getTransaction(txId, (err, transaction) => {
-            if (transaction.from === from) {
-              cb()
-              filter.stopWatching()
-            }
-          })
-        })
-      }
-    })
-  })
-}
-
 const getChoiceFromBlockchain = (opponent, gameId, cb) => {
   let web3 = store.getState().web3.web3Instance
   let myAddress = web3.eth.accounts[0]
@@ -55,7 +36,13 @@ const getChoiceFromBlockchain = (opponent, gameId, cb) => {
   let deployed = CONTRACT_ADDRESS ? blockPaperScissors.at(CONTRACT_ADDRESS) : blockPaperScissors.deployed()
   deployed.then(function(blockPaperScissorsInstance) {
     blockPaperScissorsInstance.getChoice(opponent, myAddress, gameId, {from: myAddress}).then((choice) => {
-      cb(choice)
+      if (choice) {
+        cb(choice)
+      } else {
+        setTimeout(() => {
+          getChoiceFromBlockchain(opponent, gameId, cb)
+        }, 10000)
+      }
     })
   })
 }
@@ -86,12 +73,8 @@ const gameReducer = (state = initialState, action) => {
       }
       return state
     case ON_RECEIVE_COMMIT_CHOICE:
-      waitForTransactionFrom(state.opponent, () => {
-        // load current, up-to-date state because we don't know when this will run
-        let currentState = store.getState()
-        getChoiceFromBlockchain(currentState.game.opponent, currentState.game.gameId, (choice) => {
-          store.dispatch({ type: ON_RECEIVE_RECORDED_CHOICE, choice })
-        })
+      getChoiceFromBlockchain(state.opponent, state.gameId, (choice) => {
+        store.dispatch({ type: ON_RECEIVE_RECORDED_CHOICE, choice })
       })
       return state
     case ON_RECEIVE_RECORDED_CHOICE:
