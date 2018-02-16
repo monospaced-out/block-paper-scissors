@@ -9,6 +9,7 @@ const mapStateToProps = (state) => {
   return {
     playerChoice: state.game.playerChoice,
     opponentChoice: state.game.opponentChoice,
+    opponentKey: state.game.opponentKey,
     opponent: state.game.opponent
   }
 }
@@ -17,7 +18,7 @@ const mapDispatchToProps = dispatch => {
   return {}
 }
 
-let GameMain = ({ playerChoice, opponentChoice, opponent }) => {
+let GameMain = ({ playerChoice, opponentChoice, opponentKey, opponent }) => {
   let readout =
     <div>
       <Readout />
@@ -36,7 +37,7 @@ let GameMain = ({ playerChoice, opponentChoice, opponent }) => {
 
   if (!opponent) {
     return players
-  } else if (playerChoice && opponentChoice) {
+  } else if (playerChoice && opponentChoice && opponentKey) {
     return readout
   } else {
     return buttons

@@ -1,26 +1,45 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { CHOICES } from '../../ui/choiceButton/ChoiceButtonActions'
+import { CHOICES, ROCK, PAPER, SCISSORS } from '../../ui/choiceButton/ChoiceButtonActions'
 import { resetGame } from './ReadoutActions'
 
+const hash = require('hash.js')
+
 const winCheck = (playerChoice, opponentChoice, CHOICES) => {
-  let playerScore = CHOICES.indexOf(playerChoice)
-  let opponentScore = CHOICES.indexOf(opponentChoice)
+  let playerChoiceIndex = CHOICES.indexOf(playerChoice)
+  let opponentChoiceIndex = CHOICES.indexOf(opponentChoice)
   let mod = CHOICES.length
 
-  if (playerScore === (opponentScore + 1) % mod)
+  if (playerChoiceIndex === (opponentChoiceIndex + 1) % mod)
     return 'win'
-  else if (opponentScore === (playerScore + 1) % mod) {
+  else if (opponentChoiceIndex === (playerChoiceIndex + 1) % mod) {
     return 'lose'
-  } else {
+  } else if (opponentChoiceIndex === playerChoiceIndex) {
     return 'tie'
+  } else {
+    return 'invalid'
   }
+}
+
+const decryptChoice = (choice, key) => {
+  let rockEncryption = hash.sha256().update(ROCK + key).digest('hex')
+  let paperEncryption = hash.sha256().update(PAPER + key).digest('hex')
+  let scissorsEncryption = hash.sha256().update(SCISSORS + key).digest('hex')
+  if (rockEncryption === choice) {
+    return ROCK
+  } else if (paperEncryption === choice) {
+    return PAPER
+  } else if (scissorsEncryption === choice) {
+    return SCISSORS
+  }
+  return 'invalid'
 }
 
 const mapStateToProps = (state, ownProps) => {
   return {
     playerChoice: state.game.playerChoice,
-    opponentChoice: state.game.opponentChoice
+    opponentChoice: state.game.opponentChoice,
+    opponentKey: state.game.opponentKey
   }
 }
 
@@ -32,13 +51,14 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-let Readout = ({ playerChoice, opponentChoice, resetGame }) => {
-  let outcome = winCheck(playerChoice, opponentChoice, CHOICES)
+let Readout = ({ playerChoice, opponentChoice, opponentKey, resetGame }) => {
+  let decryptedChoice = decryptChoice(opponentChoice, opponentKey)
+  let outcome = winCheck(playerChoice, decryptedChoice, CHOICES)
   return (
     <div>
       <div>Outcome: {outcome}</div>
-      <div>Current Choice: {playerChoice}</div>
-      <div>Opponent Choice: {opponentChoice}</div>
+      <div>My Choice: {playerChoice}</div>
+      <div>Opponent Choice: {decryptedChoice}</div>
       <button onClick={() => resetGame()}>New Game</button>
     </div>
   )

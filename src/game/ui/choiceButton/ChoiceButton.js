@@ -5,6 +5,7 @@ import store from '../../../store'
 import BlockPaperScissorsContract from '../../../../build/contracts/BlockPaperScissors.json'
 
 const contract = require('truffle-contract')
+const hash = require('hash.js')
 
 const postPlayToBlockchain = (opponent, choice, gameId, cb) => {
   let web3 = store.getState().web3.web3Instance
@@ -21,7 +22,7 @@ const postPlayToBlockchain = (opponent, choice, gameId, cb) => {
 }
 
 const encryptChoice = (choice, key) => {
-  return choice // TODO
+  return hash.sha256().update(choice + key).digest('hex')
 }
 
 const mapStateToProps = (state, ownProps) => {
