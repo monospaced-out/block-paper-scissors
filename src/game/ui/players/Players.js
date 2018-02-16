@@ -27,13 +27,17 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-const playersAsHTML = ({addresses, onClickInvite}) => {
+const playersAsHTML = ({addresses, incomingInvites, outgoingInvites, onClickInvite}) => {
   if (addresses.length) {
     return addresses.map((address, index) => {
+      let inviteButton
+      if (!outgoingInvites.includes(address) && !incomingInvites.includes(address)) {
+        inviteButton = <span className="btn" onClick={() => onClickInvite(address)}>Invite</span>
+      }
       return (
         <p key={index}>
-          <span>{ address }</span>
-          <button onClick={() => onClickInvite(address)}>Invite</button>
+          <span className="address">{ address }</span>
+          { inviteButton }
         </p>
       )
     })
@@ -47,9 +51,9 @@ const incomingInvitesAsHTML = ({addresses, onClickAccept, onClickReject}) => {
     return addresses.map((address, index) => {
       return (
         <p key={index}>
-          <span>{ address }</span>
-          <button onClick={() => onClickAccept(address)}>Accept</button>
-          <button onClick={() => onClickReject(address)}>Reject</button>
+          <span className="address">{ address }</span>
+          <span className="btn" onClick={() => onClickAccept(address)}>Accept</span>
+          <span className="btn" onClick={() => onClickReject(address)}>Reject</span>
         </p>
       )
     })
@@ -63,8 +67,8 @@ const outgoingInvitesAsHTML = ({addresses, onClickCancel}) => {
     return addresses.map((address, index) => {
       return (
         <p key={index}>
-          <span>{ address }</span>
-          <button onClick={() => onClickCancel(address)}>Cancel</button>
+          <span className="address">{ address }</span>
+          <span className="btn" onClick={() => onClickCancel(address)}>Cancel</span>
         </p>
       )
     })
@@ -74,7 +78,7 @@ const outgoingInvitesAsHTML = ({addresses, onClickCancel}) => {
 }
 
 let Players = ({ players, incomingInvites, outgoingInvites, onClickInvite, onClickCancel, onClickAccept, onClickReject }) => {
-  let playersHTML = playersAsHTML({ addresses: players, onClickInvite })
+  let playersHTML = playersAsHTML({ addresses: players, incomingInvites, outgoingInvites, onClickInvite })
   let outgoingInvitesHTML = outgoingInvitesAsHTML({ addresses: outgoingInvites, onClickCancel })
   let incomingInvitesHTML = incomingInvitesAsHTML({ addresses: incomingInvites, onClickAccept, onClickReject })
   return(
