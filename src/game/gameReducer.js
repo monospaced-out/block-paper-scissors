@@ -7,6 +7,7 @@ import BlockPaperScissorsContract from '../../build/contracts/BlockPaperScissors
 
 const contract = require('truffle-contract')
 
+const CONTRACT_ADDRESS = process.env.BLOCK_PAPER_SCISSORS_CONTRACT
 const ON_RECEIVE_RECORDED_CHOICE = 'onReceiveRecordedChoice'
 
 const initialState = {
@@ -49,9 +50,10 @@ const waitForTransactionFrom = (from, cb) => {
 const getChoiceFromBlockchain = (opponent, gameId, cb) => {
   let web3 = store.getState().web3.web3Instance
   let myAddress = web3.eth.accounts[0]
-  const blockPaperScissors = contract(BlockPaperScissorsContract)
+  let blockPaperScissors = contract(BlockPaperScissorsContract)
   blockPaperScissors.setProvider(web3.currentProvider)
-  blockPaperScissors.deployed().then(function(blockPaperScissorsInstance) {
+  let deployed = CONTRACT_ADDRESS ? blockPaperScissors.at(CONTRACT_ADDRESS) : blockPaperScissors.deployed()
+  deployed.then(function(blockPaperScissorsInstance) {
     blockPaperScissorsInstance.getChoice(opponent, myAddress, gameId, {from: myAddress}).then((choice) => {
       cb(choice)
     })

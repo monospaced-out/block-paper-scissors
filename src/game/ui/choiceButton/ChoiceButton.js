@@ -4,18 +4,21 @@ import { play } from './ChoiceButtonActions'
 import store from '../../../store'
 import BlockPaperScissorsContract from '../../../../build/contracts/BlockPaperScissors.json'
 
+const CONTRACT_ADDRESS = process.env.BLOCK_PAPER_SCISSORS_CONTRACT
+
 const contract = require('truffle-contract')
 const hash = require('hash.js')
 
 const postPlayToBlockchain = (opponent, choice, gameId, cb) => {
   let web3 = store.getState().web3.web3Instance
 
-  const blockPaperScissors = contract(BlockPaperScissorsContract)
+  let blockPaperScissors = contract(BlockPaperScissorsContract)
   blockPaperScissors.setProvider(web3.currentProvider)
+  let deployed = CONTRACT_ADDRESS ? blockPaperScissors.at(CONTRACT_ADDRESS) : blockPaperScissors.deployed()
 
   // Get current ethereum wallet.
   web3.eth.getCoinbase((error, coinbase) => {
-    blockPaperScissors.deployed().then(function(blockPaperScissorsInstance) {
+    deployed.then(function(blockPaperScissorsInstance) {
       blockPaperScissorsInstance.createPlay(opponent, choice, gameId, {from: coinbase}).then(cb)
     })
   })
