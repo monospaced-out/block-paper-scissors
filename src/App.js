@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
-import { HiddenOnlyAuth, VisibleOnlyAuth } from './util/wrappers.js'
 
 // Styles
 import './css/oswald.css'
@@ -13,7 +12,12 @@ class App extends Component {
     return (
       <div className="App">
         <nav className="navbar pure-menu pure-menu-horizontal">
-          <Link to="/" className="pure-menu-heading pure-menu-link">BlockPaperScissors</Link>
+          <div>
+            <Link to="/" className="pure-menu-heading"><span className="text-block">Block</span><span className="text-paper">Paper</span><span className="text-scissors-1">Scis</span><span className="text-scissors-2">sors</span></Link>
+          </div>
+          <div>
+            <img src="block-paper-scissors.svg" className="logo" role="presentation" />
+          </div>
         </nav>
 
         {this.props.children}
