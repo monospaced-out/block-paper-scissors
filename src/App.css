@@ -32,6 +32,25 @@ img.logo {
   width: 100px;
 }
 
+.btn {
+  display: inline-block;
+  background: #e595b9;
+  color: #231b33;
+  font-weight: 600;
+  padding: 5px;
+  margin: 0 10px;
+  text-transform: uppercase;
+}
+
+.btn:hover {
+  cursor: pointer;
+  background: #f265a4;
+}
+
+.address {
+  margin-right: 10px;
+}
+
 .web3-status {
   margin-top: 50px;
   color: #4c4756;
