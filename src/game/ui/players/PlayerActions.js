@@ -3,6 +3,8 @@ export const ON_RECEIVE_INVITE = 'ON_RECEIVE_INVITE'
 export const ON_RECEIVE_CANCEL_INVITE = 'ON_RECEIVE_CANCEL_INVITE'
 export const ON_RECEIVE_ACCEPT_INVITE = 'ON_RECEIVE_ACCEPT_INVITE'
 export const ON_RECEIVE_REJECT_INVITE = 'ON_RECEIVE_REJECT_INVITE'
+export const ON_RECEIVE_COMMIT_CHOICE = 'ON_RECEIVE_COMMIT_CHOICE'
+export const ON_RECEIVE_REVEAL_CHOICE = 'ON_RECEIVE_REVEAL_CHOICE'
 export const SEND_INVITE = 'SEND_INVITE'
 export const CANCEL_INVITE = 'CANCEL_INVITE'
 export const ACCEPT_INVITE = 'ACCEPT_INVITE'
@@ -41,6 +43,21 @@ export function onReceiveRejectInvite(sender) {
   return {
     type: ON_RECEIVE_REJECT_INVITE,
     sender
+  }
+}
+
+export function onReceiveCommitChoice(sender) {
+  return {
+    type: ON_RECEIVE_COMMIT_CHOICE,
+    sender
+  }
+}
+
+export function onReceiveRevealChoice(sender, key) {
+  return {
+    type: ON_RECEIVE_REVEAL_CHOICE,
+    sender,
+    key
   }
 }
 

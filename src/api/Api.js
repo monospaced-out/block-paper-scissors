@@ -5,6 +5,8 @@ export const INVITE_MESSAGE = 'invite'
 export const CANCEL_INVITE_MESSAGE = 'cancelInvite'
 export const ACCEPT_INVITE_MESSAGE = 'acceptInvite'
 export const REJECT_INVITE_MESSAGE = 'rejectInvite'
+export const COMMIT_CHOICE_MESSAGE = 'commitChoice'
+export const REVEAL_CHOICE_MESSAGE = 'revealChoice'
 
 export function subscribeToAddresses(myAddress, cb) {
   socket.on('addresses', cb);

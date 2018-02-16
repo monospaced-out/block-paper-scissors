@@ -4,8 +4,8 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { UserIsAuthenticated, UserIsNotAuthenticated } from './util/wrappers.js'
-import { subscribeToAddresses, subscribeToMessages, INVITE_MESSAGE, CANCEL_INVITE_MESSAGE, ACCEPT_INVITE_MESSAGE, REJECT_INVITE_MESSAGE } from './api/Api'
-import { updatePlayers, onReceiveInvite, onReceiveCancelInvite, onReceiveAcceptInvite, onReceiveRejectInvite } from './game/ui/players/PlayerActions'
+import { subscribeToAddresses, subscribeToMessages, INVITE_MESSAGE, CANCEL_INVITE_MESSAGE, ACCEPT_INVITE_MESSAGE, REJECT_INVITE_MESSAGE, COMMIT_CHOICE_MESSAGE, REVEAL_CHOICE_MESSAGE } from './api/Api'
+import { updatePlayers, onReceiveInvite, onReceiveCancelInvite, onReceiveAcceptInvite, onReceiveRejectInvite, onReceiveCommitChoice, onReceiveRevealChoice } from './game/ui/players/PlayerActions'
 import getWeb3 from './util/web3/getWeb3'
 
 // Layouts
@@ -48,6 +48,13 @@ getWeb3
           break
         case REJECT_INVITE_MESSAGE:
           store.dispatch(onReceiveRejectInvite(sender))
+          break
+        case COMMIT_CHOICE_MESSAGE:
+          store.dispatch(onReceiveCommitChoice(sender))
+          break
+        case REVEAL_CHOICE_MESSAGE:
+          let key = meta
+          store.dispatch(onReceiveRevealChoice(sender, key))
           break
         default:
           console.log('invalid message', message)
