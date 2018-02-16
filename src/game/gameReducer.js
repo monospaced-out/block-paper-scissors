@@ -1,6 +1,6 @@
 import { PLAY, CHOICES } from './ui/choiceButton/ChoiceButtonActions'
 import { RESET_GAME } from './ui/readout/ReadoutActions'
-import { UPDATE_PLAYERS, ON_RECEIVE_INVITE, ON_RECEIVE_CANCEL_INVITE, ON_RECEIVE_ACCEPT_INVITE, ON_RECEIVE_REJECT_INVITE, ON_RECEIVE_COMMIT_CHOICE, SEND_INVITE, CANCEL_INVITE, ACCEPT_INVITE, REJECT_INVITE } from './ui/players/PlayerActions'
+import { UPDATE_PLAYERS, ON_RECEIVE_INVITE, ON_RECEIVE_CANCEL_INVITE, ON_RECEIVE_ACCEPT_INVITE, ON_RECEIVE_REJECT_INVITE, ON_RECEIVE_COMMIT_CHOICE, ON_RECEIVE_REVEAL_CHOICE, SEND_INVITE, CANCEL_INVITE, ACCEPT_INVITE, REJECT_INVITE } from './ui/players/PlayerActions'
 import { sendMessage, INVITE_MESSAGE, CANCEL_INVITE_MESSAGE, ACCEPT_INVITE_MESSAGE, REJECT_INVITE_MESSAGE, COMMIT_CHOICE_MESSAGE, REVEAL_CHOICE_MESSAGE } from '../api/Api'
 import store from '../store'
 import BlockPaperScissorsContract from '../../build/contracts/BlockPaperScissors.json'
@@ -12,6 +12,7 @@ const ON_RECEIVE_RECORDED_CHOICE = 'onReceiveRecordedChoice'
 const initialState = {
   playerChoice: null,
   opponentChoice: null,
+  opponentKey: null,
   players: [],
   incomingInvites: [],
   outgoingInvites: [],
@@ -26,24 +27,18 @@ const filterInactive = (players, activePlayers) => {
   });
 }
 
-// TODO: clean up!
-const getChoiceFromBlockchain = (opponent, gameId, cb) => {
+const waitForTransactionFrom = (from, cb) => {
   let web3 = store.getState().web3.web3Instance
-  let myAddress = web3.eth.accounts[0]
   let filter = web3.eth.filter('latest')
-  const blockPaperScissors = contract(BlockPaperScissorsContract)
-  blockPaperScissors.setProvider(web3.currentProvider)
   filter.watch(function(err, blockHash) {
     web3.eth.getBlock(blockHash, false, (err, confirmedBlock) => {
       if (confirmedBlock.transactions.length > 0) {
         confirmedBlock.transactions.forEach(function(txId) {
           web3.eth.getTransaction(txId, (err, transaction) => {
-            if (transaction.from === opponent) {
-              blockPaperScissors.deployed().then(function(blockPaperScissorsInstance) {
-                blockPaperScissorsInstance.getChoice(opponent, myAddress, gameId, {from: myAddress}).then((choice) => {
-                  cb(choice)
-                })
-              })
+            if (transaction.from === from) {
+              cb()
+            } else {
+              waitForTransactionFrom(web3, from, cb)
             }
           })
         })
@@ -52,14 +47,28 @@ const getChoiceFromBlockchain = (opponent, gameId, cb) => {
   })
 }
 
+const getChoiceFromBlockchain = (opponent, gameId, cb) => {
+  let web3 = store.getState().web3.web3Instance
+  let myAddress = web3.eth.accounts[0]
+  const blockPaperScissors = contract(BlockPaperScissorsContract)
+  blockPaperScissors.setProvider(web3.currentProvider)
+  blockPaperScissors.deployed().then(function(blockPaperScissorsInstance) {
+    blockPaperScissorsInstance.getChoice(opponent, myAddress, gameId, {from: myAddress}).then((choice) => {
+      cb(choice)
+    })
+  })
+}
+
 const gameReducer = (state = initialState, action) => {
   switch (action.type) {
     case PLAY:
-      let opponentChoice = CHOICES[ Math.floor(Math.random() * CHOICES.length) ]
       sendMessage({ recipient: state.opponent, message: COMMIT_CHOICE_MESSAGE, meta: null })
-      return { ...state, playerChoice: action.choice, key: action.key, opponentChoice }
+      if (state.opponentChoice) {
+        sendMessage({ recipient: state.opponent, message: REVEAL_CHOICE_MESSAGE, meta: action.key })
+      }
+      return { ...state, playerChoice: action.choice, key: action.key }
     case RESET_GAME:
-      return { ...state, playerChoice: null, opponentChoice: null, opponent: null, gameId: null, key: null }
+      return { ...state, playerChoice: null, opponentChoice: null, opponentKey: null, opponent: null, gameId: null, key: null }
     case UPDATE_PLAYERS:
       return { ...state,
         players: action.players,
@@ -76,13 +85,27 @@ const gameReducer = (state = initialState, action) => {
       }
       return state
     case ON_RECEIVE_COMMIT_CHOICE:
-      getChoiceFromBlockchain(state.opponent, state.gameId, (choice) => {
-        console.log('opponent choice', choice)
-        store.dispatch({ type: ON_RECEIVE_RECORDED_CHOICE, choice })
+      waitForTransactionFrom(state.opponent, () => {
+        getChoiceFromBlockchain(state.opponent, state.gameId, (choice) => {
+          store.dispatch({ type: ON_RECEIVE_RECORDED_CHOICE, choice })
+        })
       })
       return state
     case ON_RECEIVE_RECORDED_CHOICE:
+      if (state.playerChoice && action.choice) {
+        sendMessage({ recipient: state.opponent, message: REVEAL_CHOICE_MESSAGE, meta: state.key })
+      }
       return { ...state, opponentChoice: action.choice }
+    case ON_RECEIVE_REVEAL_CHOICE:
+      if (!state.opponentChoice) {
+        getChoiceFromBlockchain(state.opponent, state.gameId, (choice) => {
+          store.dispatch({ type: ON_RECEIVE_RECORDED_CHOICE, choice })
+        })
+      }
+      if (action.sender === state.opponent) {
+        return { ...state, opponentKey: action.key }
+      }
+      return state
     case ON_RECEIVE_REJECT_INVITE:
       return { ...state, outgoingInvites: state.outgoingInvites.filter(i => i !== action.sender) }
     case SEND_INVITE:
