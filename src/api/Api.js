@@ -1,6 +1,6 @@
 import openSocket from 'socket.io-client';
 console.log('env', process.env)
-const  socket = openSocket(process.env.REACT_APP_HOSTNAME + ':8080');
+const  socket = openSocket(process.env.REACT_APP_SERVER_URL);
 
 export const INVITE_MESSAGE = 'invite'
 export const CANCEL_INVITE_MESSAGE = 'cancelInvite'
