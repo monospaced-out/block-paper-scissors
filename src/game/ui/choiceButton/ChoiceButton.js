@@ -4,7 +4,7 @@ import { play } from './ChoiceButtonActions'
 import store from '../../../store'
 import BlockPaperScissorsContract from '../../../../build/contracts/BlockPaperScissors.json'
 
-const CONTRACT_ADDRESS = process.env.BLOCK_PAPER_SCISSORS_CONTRACT
+const CONTRACT_ADDRESS = process.env.REACT_APP_BLOCK_PAPER_SCISSORS_CONTRACT
 
 const contract = require('truffle-contract')
 const hash = require('hash.js')

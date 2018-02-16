@@ -7,7 +7,7 @@ import BlockPaperScissorsContract from '../../build/contracts/BlockPaperScissors
 
 const contract = require('truffle-contract')
 
-const CONTRACT_ADDRESS = process.env.BLOCK_PAPER_SCISSORS_CONTRACT
+const CONTRACT_ADDRESS = process.env.REACT_APP_BLOCK_PAPER_SCISSORS_CONTRACT
 const ON_RECEIVE_RECORDED_CHOICE = 'onReceiveRecordedChoice'
 
 const initialState = {
