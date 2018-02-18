@@ -1,5 +1,4 @@
 import openSocket from 'socket.io-client';
-console.log('env', process.env)
 const  socket = openSocket(process.env.REACT_APP_SERVER_URL);
 
 export const INVITE_MESSAGE = 'invite'
@@ -9,9 +8,9 @@ export const REJECT_INVITE_MESSAGE = 'rejectInvite'
 export const COMMIT_CHOICE_MESSAGE = 'commitChoice'
 export const REVEAL_CHOICE_MESSAGE = 'revealChoice'
 
-export function subscribeToAddresses(myAddress, cb) {
+export function subscribeToAddresses(myAddress, myName, cb) {
   socket.on('addresses', cb);
-  socket.emit('introduction', { address: myAddress })
+  socket.emit('introduction', { address: myAddress, name: myName })
 }
 
 export function subscribeToMessages(cb) {

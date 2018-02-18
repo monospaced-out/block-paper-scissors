@@ -9,6 +9,7 @@ export const SEND_INVITE = 'SEND_INVITE'
 export const CANCEL_INVITE = 'CANCEL_INVITE'
 export const ACCEPT_INVITE = 'ACCEPT_INVITE'
 export const REJECT_INVITE = 'REJECT_INVITE'
+export const SET_UPORT_NAME = 'SET_UPORT_NAME'
 
 export function updatePlayers(players) {
   return {
@@ -86,5 +87,12 @@ export function rejectInvite(recipient) {
   return {
     type: REJECT_INVITE,
     recipient
+  }
+}
+
+export function setUportName(name) {
+  return {
+    type: SET_UPORT_NAME,
+    name
   }
 }

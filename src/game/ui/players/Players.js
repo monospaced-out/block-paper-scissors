@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { sendInvite, cancelInvite, acceptInvite, rejectInvite } from './PlayerActions'
+import includesAddress from '../../../util/includesAddress'
 
 const mapStateToProps = (state) => {
   return {
@@ -29,14 +30,16 @@ const mapDispatchToProps = dispatch => {
 
 const playersAsHTML = ({addresses, incomingInvites, outgoingInvites, onClickInvite}) => {
   if (addresses.length) {
-    return addresses.map((address, index) => {
+    return addresses.map((player, index) => {
+      let { address, name } = player
+      let publicId = name || address
       let inviteButton
-      if (!outgoingInvites.includes(address) && !incomingInvites.includes(address)) {
-        inviteButton = <span className="btn" onClick={() => onClickInvite(address)}>Invite</span>
+      if (!includesAddress(outgoingInvites, player) && !includesAddress(incomingInvites, player)) {
+        inviteButton = <span className="btn" onClick={() => onClickInvite(player)}>Invite</span>
       }
       return (
         <p key={index}>
-          <span className="address">{ address }</span>
+          <span className="address">{ publicId }</span>
           { inviteButton }
         </p>
       )
@@ -48,12 +51,14 @@ const playersAsHTML = ({addresses, incomingInvites, outgoingInvites, onClickInvi
 
 const incomingInvitesAsHTML = ({addresses, onClickAccept, onClickReject}) => {
   if (addresses.length) {
-    return addresses.map((address, index) => {
+    return addresses.map((player, index) => {
+      let { address, name } = player
+      let publicId = name || address
       return (
         <p key={index}>
-          <span className="address">{ address }</span>
-          <span className="btn" onClick={() => onClickAccept(address)}>Accept</span>
-          <span className="btn" onClick={() => onClickReject(address)}>Reject</span>
+          <span className="address">{ publicId }</span>
+          <span className="btn" onClick={() => onClickAccept(player)}>Accept</span>
+          <span className="btn" onClick={() => onClickReject(player)}>Reject</span>
         </p>
       )
     })
@@ -64,11 +69,13 @@ const incomingInvitesAsHTML = ({addresses, onClickAccept, onClickReject}) => {
 
 const outgoingInvitesAsHTML = ({addresses, onClickCancel}) => {
   if (addresses.length) {
-    return addresses.map((address, index) => {
+    return addresses.map((player, index) => {
+      let { address, name } = player
+      let publicId = name || address
       return (
         <p key={index}>
-          <span className="address">{ address }</span>
-          <span className="btn" onClick={() => onClickCancel(address)}>Cancel</span>
+          <span className="address">{ publicId }</span>
+          <span className="btn" onClick={() => onClickCancel(player)}>Cancel</span>
         </p>
       )
     })

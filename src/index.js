@@ -5,8 +5,9 @@ import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { UserIsAuthenticated, UserIsNotAuthenticated } from './util/wrappers.js'
 import { subscribeToAddresses, subscribeToMessages, INVITE_MESSAGE, CANCEL_INVITE_MESSAGE, ACCEPT_INVITE_MESSAGE, REJECT_INVITE_MESSAGE, COMMIT_CHOICE_MESSAGE, REVEAL_CHOICE_MESSAGE } from './api/Api'
-import { updatePlayers, onReceiveInvite, onReceiveCancelInvite, onReceiveAcceptInvite, onReceiveRejectInvite, onReceiveCommitChoice, onReceiveRevealChoice } from './game/ui/players/PlayerActions'
+import { setUportName, updatePlayers, onReceiveInvite, onReceiveCancelInvite, onReceiveAcceptInvite, onReceiveRejectInvite, onReceiveCommitChoice, onReceiveRevealChoice } from './game/ui/players/PlayerActions'
 import getWeb3 from './util/web3/getWeb3'
+import { Connect } from 'uport-connect'
 
 // Layouts
 import App from './App'
@@ -19,6 +20,15 @@ import store from './store'
 // Initialize react-router-redux.
 const history = syncHistoryWithStore(browserHistory, store)
 
+const connectToPlayers = (myAddress, myName) => {
+  subscribeToAddresses(myAddress, myName, addresses => {
+    let notIncludingMyAddress = addresses.filter( ( { address } ) => {
+      return address !== myAddress
+    })
+    store.dispatch(updatePlayers(notIncludingMyAddress))
+  })
+}
+
 // Initialize web3 and set in Redux.
 getWeb3
 .then(results => {
@@ -26,12 +36,6 @@ getWeb3
   let web3 = store.getState().web3.web3Instance
   let myAddress = web3.eth.accounts[0]
   if (myAddress) {
-    subscribeToAddresses(myAddress, addresses => {
-      let notIncludingMyAddress = addresses.filter( address => {
-        return address !== myAddress
-      })
-      store.dispatch(updatePlayers(notIncludingMyAddress))
-    })
     subscribeToMessages(({sender, message, meta}) => {
       switch (message) {
         case INVITE_MESSAGE:
@@ -58,10 +62,19 @@ getWeb3
           console.log('invalid message', message)
       }
     })
+
+    let uport = new Connect('BlockPaperScissors')
+    uport.requestCredentials().then((credentials) => {
+      let myName = credentials.name
+      store.dispatch(setUportName(myName))
+      connectToPlayers(myAddress, myName)
+    }).catch(() => {
+      connectToPlayers(myAddress, null)
+    })
   }
 })
-.catch(() => {
-  console.log('Error in web3 initialization.')
+.catch((err) => {
+  console.log('Error in web3 initialization.', err)
 })
 
 ReactDOM.render((

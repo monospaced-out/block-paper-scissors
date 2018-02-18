@@ -5,8 +5,6 @@ import { resetGame } from './ReadoutActions'
 
 const hash = require('hash.js')
 
-const LOADING_IMAGE_SRC = ''
-
 const winCheck = (playerChoice, opponentChoice, CHOICES) => {
   let playerChoiceIndex = CHOICES.indexOf(playerChoice)
   let opponentChoiceIndex = CHOICES.indexOf(opponentChoice)
