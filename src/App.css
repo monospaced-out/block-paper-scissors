@@ -7,6 +7,10 @@ h3 {
   color: #5dc6ae;
 }
 
+a {
+  color: #e595b9;
+}
+
 .navbar {
   background: #1e113d;
   text-align: center;
@@ -93,7 +97,7 @@ img.logo {
   margin: 50px 10px 30px 10px;
 }
 
-.web3-status {
+.footer {
   text-align: center;
   margin-top: 50px;
   color: #4c4756;
