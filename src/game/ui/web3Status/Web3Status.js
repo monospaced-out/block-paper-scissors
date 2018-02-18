@@ -13,7 +13,7 @@ let Web3Status = ({ web3Instance }) => {
   return(
     <div className="footer">
       <p>
-        This is currently running on the Rinkeby testnet. { status }
+        This is currently running on the <span className="highlight">Rinkeby</span> testnet. { status }
       </p>
       <p>
         <a href="https://github.com/monospaced-out/block-paper-scissors" target="_blank">github.com/monospaced-out/block-paper-scissors</a>
