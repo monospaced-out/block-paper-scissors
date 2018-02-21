@@ -36,7 +36,7 @@ const getMyAddress = () => {
 
 const waitForChoiceFromBlockchain = (opponentAddress, gameId, cb) => {
   let myAddress = getMyAddress()
-  getChoiceFromBlockchain(myAddress, opponentAddress, gameId, (choice) => {
+  getChoiceFromBlockchain(opponentAddress, myAddress, gameId).then((choice) => {
     if (choice) {
       cb(choice)
     } else {
