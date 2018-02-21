@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
+import Web3Status from './game/ui/web3Status/Web3Status'
 
 // Styles
 import './css/oswald.css'
@@ -21,6 +22,8 @@ class App extends Component {
         </nav>
 
         {this.props.children}
+
+        <Web3Status />
       </div>
     );
   }
