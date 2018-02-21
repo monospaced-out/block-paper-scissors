@@ -1,14 +1,14 @@
-import { PLAY, CHOICES } from './ui/choiceButton/ChoiceButtonActions'
+import { PLAY } from './ui/choiceButton/ChoiceButtonActions'
 import { RESET_GAME } from './ui/readout/ReadoutActions'
 import { UPDATE_PLAYERS, ON_RECEIVE_INVITE, ON_RECEIVE_CANCEL_INVITE, ON_RECEIVE_ACCEPT_INVITE, ON_RECEIVE_REJECT_INVITE, ON_RECEIVE_COMMIT_CHOICE, ON_RECEIVE_REVEAL_CHOICE, SEND_INVITE, CANCEL_INVITE, ACCEPT_INVITE, REJECT_INVITE, SET_UPORT_NAME } from './ui/players/PlayerActions'
 import { sendMessage, INVITE_MESSAGE, CANCEL_INVITE_MESSAGE, ACCEPT_INVITE_MESSAGE, REJECT_INVITE_MESSAGE, COMMIT_CHOICE_MESSAGE, REVEAL_CHOICE_MESSAGE } from '../api/Api'
 import store from '../store'
-import BlockPaperScissorsContract from '../../build/contracts/BlockPaperScissors.json'
 import includesAddress from '../util/includesAddress'
+import getChoiceFromBlockchain from '../util/getChoiceFromBlockchain'
+import axios from 'axios'
 
-const contract = require('truffle-contract')
+const SERVER_URL = process.env.REACT_APP_SERVER_URL
 
-const CONTRACT_ADDRESS = process.env.REACT_APP_BLOCK_PAPER_SCISSORS_CONTRACT
 const ON_RECEIVE_RECORDED_CHOICE = 'onReceiveRecordedChoice'
 
 const initialState = {
@@ -29,22 +29,21 @@ const filterInactive = (players, activePlayers) => {
   });
 }
 
-const getChoiceFromBlockchain = (opponentAddress, gameId, cb) => {
+const getMyAddress = () => {
   let web3 = store.getState().web3.web3Instance
-  let myAddress = web3.eth.accounts[0]
-  let blockPaperScissors = contract(BlockPaperScissorsContract)
-  blockPaperScissors.setProvider(web3.currentProvider)
-  let deployed = CONTRACT_ADDRESS ? blockPaperScissors.at(CONTRACT_ADDRESS) : blockPaperScissors.deployed()
-  deployed.then(function(blockPaperScissorsInstance) {
-    blockPaperScissorsInstance.getChoice(opponentAddress, myAddress, gameId, {from: myAddress}).then((choice) => {
-      if (choice) {
-        cb(choice)
-      } else {
-        setTimeout(() => {
-          getChoiceFromBlockchain(opponentAddress, gameId, cb)
-        }, 10000)
-      }
-    })
+  return web3.eth.accounts[0]
+}
+
+const waitForChoiceFromBlockchain = (opponentAddress, gameId, cb) => {
+  let myAddress = getMyAddress()
+  getChoiceFromBlockchain(myAddress, opponentAddress, gameId, (choice) => {
+    if (choice) {
+      cb(choice)
+    } else {
+      setTimeout(() => {
+        waitForChoiceFromBlockchain(opponentAddress, gameId, cb)
+      }, 5000)
+    }
   })
 }
 
@@ -74,18 +73,19 @@ const gameReducer = (state = initialState, action) => {
       }
       return state
     case ON_RECEIVE_COMMIT_CHOICE:
-      getChoiceFromBlockchain(state.opponent.address, state.gameId, (choice) => {
+      waitForChoiceFromBlockchain(state.opponent.address, state.gameId, (choice) => {
         store.dispatch({ type: ON_RECEIVE_RECORDED_CHOICE, choice })
       })
       return state
     case ON_RECEIVE_RECORDED_CHOICE:
       if (state.playerChoice && action.choice) {
         sendMessage({ recipient: state.opponent.address, message: REVEAL_CHOICE_MESSAGE, meta: state.key })
+        axios.post(SERVER_URL + '/save-result', { key: state.key, player: getMyAddress(), gameId: state.gameId })
       }
       return { ...state, opponentChoice: action.choice }
     case ON_RECEIVE_REVEAL_CHOICE:
       if (!state.opponentChoice) {
-        getChoiceFromBlockchain(state.opponent.address, state.gameId, (choice) => {
+        waitForChoiceFromBlockchain(state.opponent.address, state.gameId, (choice) => {
           store.dispatch({ type: ON_RECEIVE_RECORDED_CHOICE, choice })
         })
       }
