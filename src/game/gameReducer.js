@@ -20,7 +20,8 @@ const initialState = {
   outgoingInvites: [],
   opponent: null,
   gameId: null,
-  key: null
+  key: null,
+  uportName: null
 }
 
 const filterInactive = (players, activePlayers) => {
@@ -84,7 +85,8 @@ const gameReducer = (state = initialState, action) => {
           key: state.key,
           player: getMyAddress(),
           opponent: state.opponent.address,
-          gameId: state.gameId
+          gameId: state.gameId,
+          name: state.uportName
         })
       }
       return { ...state, opponentChoice: action.choice }

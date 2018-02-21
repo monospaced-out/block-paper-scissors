@@ -45,7 +45,7 @@ const getChoicesForGame = (results, mapped) => {
       if (decrypted !== 'invalid') {
         mapped[result.player] = decrypted
         if (!mapped.players.includes[result.player]) {
-          mapped.players.push(result.player)
+          mapped.players.push({ address: result.player, name: result.name })
         }
       }
       return getChoicesForGame(results.slice(1), mapped)
