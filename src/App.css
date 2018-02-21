@@ -20,6 +20,17 @@ a {
   text-align: center;
 }
 
+.nav-2 {
+  background: #170e2d;
+  border-bottom: 2px solid #38d1ad;
+  padding: 10px 0;
+  text-align: center;
+}
+
+.nav-2 a {
+  text-decoration: none;
+}
+
 .text-block {
   color: #513a7c;
 }
@@ -38,6 +49,10 @@ a {
 
 img.logo {
   width: 100px;
+}
+
+.logo-text {
+  margin-bottom: 10px;
 }
 
 .btn {
@@ -154,6 +169,10 @@ code {
 .navbar .uport-logo {
   height: 16px;
   margin-right: 10px;
+}
+
+.win {
+  color: #38d1ad;
 }
 
 

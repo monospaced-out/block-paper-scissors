@@ -14,12 +14,20 @@ class App extends Component {
       <div className="App">
         <nav className="navbar pure-menu pure-menu-horizontal">
           <div>
-            <Link to="/" className="pure-menu-heading"><span className="text-block">Block</span><span className="text-paper">Paper</span><span className="text-scissors-1">Scis</span><span className="text-scissors-2">sors</span></Link>
-          </div>
-          <div>
-            <img src="block-paper-scissors.svg" className="logo" role="presentation" />
+            <Link to="/" className="pure-menu-heading">
+              <div className="logo-text">
+                <span className="text-block">Block</span><span className="text-paper">Paper</span><span className="text-scissors-1">Scis</span><span className="text-scissors-2">sors</span>
+              </div>
+              <div>
+                <img src="block-paper-scissors.svg" className="logo" role="presentation" />
+              </div>
+            </Link>
           </div>
         </nav>
+
+        <div className="nav-2">
+          <Link to="/results" className="btn">Historical Results</Link>
+        </div>
 
         {this.props.children}
 

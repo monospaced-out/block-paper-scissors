@@ -80,7 +80,12 @@ const gameReducer = (state = initialState, action) => {
     case ON_RECEIVE_RECORDED_CHOICE:
       if (state.playerChoice && action.choice) {
         sendMessage({ recipient: state.opponent.address, message: REVEAL_CHOICE_MESSAGE, meta: state.key })
-        axios.post(SERVER_URL + '/save-result', { key: state.key, player: getMyAddress(), gameId: state.gameId })
+        axios.post(SERVER_URL + '/save-result', {
+          key: state.key,
+          player: getMyAddress(),
+          opponent: state.opponent.address,
+          gameId: state.gameId
+        })
       }
       return { ...state, opponentChoice: action.choice }
     case ON_RECEIVE_REVEAL_CHOICE:
