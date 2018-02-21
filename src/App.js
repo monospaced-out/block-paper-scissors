@@ -26,7 +26,8 @@ class App extends Component {
         </nav>
 
         <div className="nav-2">
-          <Link to="/results" className="btn">Historical Results</Link>
+          <Link to="/" className="btn">Play</Link>
+          <Link to="/results" className="btn">Archives</Link>
         </div>
 
         {this.props.children}
