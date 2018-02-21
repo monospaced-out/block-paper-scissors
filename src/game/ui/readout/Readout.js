@@ -1,24 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { CHOICES, CHOICE_IMAGE_MAPPING } from '../../ui/choiceButton/ChoiceButtonActions'
+import { CHOICE_IMAGE_MAPPING } from '../../ui/choiceButton/ChoiceButtonActions'
 import { resetGame } from './ReadoutActions'
 import decryptChoice from '../../../util/decryptChoice'
-
-const winCheck = (playerChoice, opponentChoice, CHOICES) => {
-  let playerChoiceIndex = CHOICES.indexOf(playerChoice)
-  let opponentChoiceIndex = CHOICES.indexOf(opponentChoice)
-  let mod = CHOICES.length
-
-  if (playerChoiceIndex === (opponentChoiceIndex + 1) % mod)
-    return 'YOU WIN'
-  else if (opponentChoiceIndex === (playerChoiceIndex + 1) % mod) {
-    return 'YOU LOSE'
-  } else if (opponentChoiceIndex === playerChoiceIndex) {
-    return 'IT\'S A DRAW'
-  } else {
-    return 'well fuck'
-  }
-}
+import winCheck from '../../../util/winCheck'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -40,7 +25,7 @@ let Readout = ({ playerChoice, opponentChoice, opponentKey, resetGame }) => {
   let hasOpponentChoice = opponentKey && opponentChoice
   let decryptedChoice = decryptChoice(opponentChoice, opponentKey)
   let opponentChoiceDisplay = opponentChoice ? decryptedChoice : '...'
-  let outcome = hasOpponentChoice ? winCheck(playerChoice, opponentChoiceDisplay, CHOICES) : ''
+  let outcome = hasOpponentChoice ? winCheck(playerChoice, opponentChoiceDisplay) : ''
   let newGameButton
   if (hasOpponentChoice) {
     newGameButton = <span className="btn" onClick={() => resetGame()}>New Game</span>
