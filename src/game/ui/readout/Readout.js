@@ -1,9 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { CHOICES, CHOICE_IMAGE_MAPPING, ROCK, PAPER, SCISSORS } from '../../ui/choiceButton/ChoiceButtonActions'
+import { CHOICES, CHOICE_IMAGE_MAPPING } from '../../ui/choiceButton/ChoiceButtonActions'
 import { resetGame } from './ReadoutActions'
-
-const hash = require('hash.js')
+import decryptChoice from '../../../util/decryptChoice'
 
 const winCheck = (playerChoice, opponentChoice, CHOICES) => {
   let playerChoiceIndex = CHOICES.indexOf(playerChoice)
@@ -19,20 +18,6 @@ const winCheck = (playerChoice, opponentChoice, CHOICES) => {
   } else {
     return 'well fuck'
   }
-}
-
-const decryptChoice = (choice, key) => {
-  let rockEncryption = hash.sha256().update(ROCK + key).digest('hex')
-  let paperEncryption = hash.sha256().update(PAPER + key).digest('hex')
-  let scissorsEncryption = hash.sha256().update(SCISSORS + key).digest('hex')
-  if (rockEncryption === choice) {
-    return ROCK
-  } else if (paperEncryption === choice) {
-    return PAPER
-  } else if (scissorsEncryption === choice) {
-    return SCISSORS
-  }
-  return 'invalid'
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -57,7 +42,7 @@ let Readout = ({ playerChoice, opponentChoice, opponentKey, resetGame }) => {
   let opponentChoiceDisplay = opponentChoice ? decryptedChoice : '...'
   let outcome = hasOpponentChoice ? winCheck(playerChoice, opponentChoiceDisplay, CHOICES) : ''
   let newGameButton
-  if (opponentChoice) {
+  if (hasOpponentChoice) {
     newGameButton = <span className="btn" onClick={() => resetGame()}>New Game</span>
   }
   let myImage = <img src={CHOICE_IMAGE_MAPPING[playerChoice]} alt={playerChoice} />
